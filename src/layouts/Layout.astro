@@ -1,0 +1,97 @@
+---
+import { SEO } from "astro-seo";
+import Footer from "@components/footer.astro";
+import Navbar from "@components/navbar/navbar.astro";
+import "@fontsource/inter/variable.css";
+
+export interface Props {
+  title: string;
+}
+
+// const { src } = await getImage({
+//   src: "../../assets/hero.png",
+//   width: 800,
+//   height: 742,
+//   format: "avif",
+// });
+// console.log(src);
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+
+const resolvedImageWithDomain = new URL(
+  "/opengraph.jpg",
+  Astro.site
+).toString();
+
+const { title } = Astro.props;
+
+const makeTitle = title
+  ? title + " | " + "Sweet Treats Bakery"
+  : "Sweet Treats Bakery - Your favourite cookie store";
+
+const shopemaaKey = import.meta.env.PUBLIC_SHOPEMAA_KEY;
+const shopemaaSecret = import.meta.env.PUBLIC_SHOPEMAA_SECRET;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="stylesheet" href="https://shopemaa.link/themes/monalisa/css/tailwind/tailwind.min.css" is:inline>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" is:inline></script>
+    <script src="https://shopemaa.link/themes/monalisa/js/main.js" is:inline></script>
+    <script src="https://js.stripe.com/v3/" is:inline></script>
+    <script src="https://cdn.jsdelivr.net/gh/shopemaa/shopemaa-checkout@v0.0.6/shopemaa.js" is:inline></script>
+    <script>
+      window.onload = function () {
+        let shopemaaKey = document.getElementById("shopemaaKey");
+        let shopemaaSecret = document.getElementById("shopemaaSecret");
+        if (shopemaaKey != null && shopemaaSecret != null) {
+            initShopemaa(shopemaaKey.value, shopemaaSecret.value);
+        }
+      }
+    </script>
+
+    <input type="hidden" id="shopemaaKey" value={ shopemaaKey }>
+    <input type="hidden" id="shopemaaSecret" value={ shopemaaSecret }>
+
+    <!-- <link rel="preload" as="image" href={src} alt="Hero" /> -->
+    <SEO
+      title={makeTitle}
+      description="Astroship is a starter website template for Astro built with TailwindCSS."
+      canonical={canonicalURL}
+      twitter={{
+        creator: "@surjithctly",
+        site: "@web3templates",
+        card: "summary_large_image",
+      }}
+      openGraph={{
+        basic: {
+          url: canonicalURL,
+          type: "website",
+          title: `Astroship - Starter Template for Astro`,
+          image: resolvedImageWithDomain,
+        },
+        image: {
+          alt: "Astroship Homepage Screenshot",
+        },
+      }}
+    />
+  </head>
+  <body>
+    <Navbar />
+    <slot />
+    <Footer />
+    <style is:global>
+      /* Improve Page speed */
+      /* https://css-tricks.com/almanac/properties/c/content-visibility/ */
+      img {
+        content-visibility: auto;
+      }
+    </style>
+  </body>
+</html>
